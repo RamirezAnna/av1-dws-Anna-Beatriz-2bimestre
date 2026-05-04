@@ -1,45 +1,24 @@
-import express from "express";
+import app from "./app.js";
+import { prisma } from "./config/prisma.js";
 
-// Cria a aplicação Express
-const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Define a porta em que o servidor vai rodar
-const PORT = 3000;
+async function main() {
+  try {
+    await prisma.$connect();
+    console.log("Conexão bem-sucedida com o banco de dados!");
+  } catch (error) {
+    console.error("Erro ao conectar ao banco de dados:", error);
+    process.exit(1);
+  }
+}
 
-// ========================================
-// CONFIGURAÇÃO INICIAL
-// ========================================
+process.on("SIGINT", async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
 
-// Permite que o servidor entenda JSON enviado no corpo da requisição
-app.use(express.json());
+main();
 
-// ========================================
-// DADOS EM MEMÓRIA
-// ========================================
-
-// Array que armazena as tarefas temporariamente
-// Observação importante para os alunos:
-// esses dados somem quando o servidor reinicia
-
-
-// ========================================
-// FUNÇÕES AUXILIARES
-// ========================================
-
-/**
- * Procura o índice de uma tarefa no array com base no id
- * Retorna:
- * - o índice da tarefa, se encontrar
- * - -1, se não encontrar
- */
-
-
-
-// ========================================
-// INICIALIZAÇÃO DO SERVIDOR
-// ========================================
-
-// Faz o servidor começar a escutar a porta definida
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
