@@ -9,6 +9,7 @@
 
 import express from "express";
 import tarefaRoutes from "./routes/tarefaRoutes.js";
+import taskPrismaRoutes from "./routes/taskPrismaRoutes.js";
 
 // Cria a aplicação Express
 const app = express();
@@ -36,8 +37,11 @@ app.get("/", (req, res) => {
   });
 });
 
-// Registra as rotas de tarefas
+// Registra as rotas de tarefas (memória)
 app.use(tarefaRoutes);
+
+// Registra as rotas de tarefas (Prisma)
+app.use(taskPrismaRoutes);
 
 // ========================================
 // TRATAMENTO DE ROTAS NÃO ENCONTRADAS
