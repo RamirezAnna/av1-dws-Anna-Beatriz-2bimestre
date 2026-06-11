@@ -1,4 +1,4 @@
-export default function TarefaTabela({ tarefas }) {
+export default function TarefaTabela({ tarefas, onEditar, onDeletar }) {
   return (
     <div className="lg:w-2/3 w-full mx-auto overflow-auto">
       <table className="table-auto w-full text-left whitespace-no-wrap">
@@ -11,6 +11,10 @@ export default function TarefaTabela({ tarefas }) {
             <th className="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">
               Descrição
             </th>
+
+            <th className="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tr rounded-br">
+              Ações
+            </th>
           </tr>
         </thead>
 
@@ -20,6 +24,22 @@ export default function TarefaTabela({ tarefas }) {
               <td className="px-4 py-3">{tarefa.id}</td>
 
               <td className="px-4 py-3">{tarefa.descricao}</td>
+
+              <td className="px-4 py-3 flex gap-2">
+                <button
+                  onClick={() => onEditar(tarefa)}
+                  className="text-white bg-blue-500 border-0 py-2 px-4 focus:outline-none hover:bg-blue-600 rounded text-sm"
+                >
+                  Editar
+                </button>
+
+                <button
+                  onClick={() => onDeletar(tarefa.id)}
+                  className="text-white bg-red-500 border-0 py-2 px-4 focus:outline-none hover:bg-red-600 rounded text-sm"
+                >
+                  Deletar
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

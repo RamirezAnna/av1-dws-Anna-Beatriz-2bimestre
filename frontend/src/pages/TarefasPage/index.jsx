@@ -6,18 +6,55 @@ import TarefaTabela from "../../components/TarefaTabela";
 export default function TarefasPage() {
   const [tarefas, setTarefas] = useState([]);
   const [descricao, setDescricao] = useState("");
+  const [tarefaEmEdicao, setTarefaEmEdicao] = useState(null);
 
   useEffect(() => {
+    carregarTarefas();
+  }, []);
+
+  const carregarTarefas = () => {
     api.get("/tarefas").then((response) => {
       setTarefas(response.data);
     });
-  }, []);
+  };
 
   const cadastrarTarefa = () => {
-    api.post("/tarefas", { descricao }).then((response) => {
-      setTarefas([...tarefas, response.data]);
-      setDescricao("");
+    if (tarefaEmEdicao) {
+      // Modo de edição - usa PATCH
+      api
+        .patch(`/tarefas/${tarefaEmEdicao.id}`, { descricao })
+        .then((response) => {
+          setTarefas(
+            tarefas.map((t) =>
+              t.id === tarefaEmEdicao.id ? { ...t, descricao } : t,
+            ),
+          );
+          setDescricao("");
+          setTarefaEmEdicao(null);
+        });
+    } else {
+      // Modo de criação
+      api.post("/tarefas", { descricao }).then((response) => {
+        setTarefas([...tarefas, response.data.tarefa]);
+        setDescricao("");
+      });
+    }
+  };
+
+  const deletarTarefa = (id) => {
+    api.delete(`/tarefas/${id}`).then(() => {
+      setTarefas(tarefas.filter((t) => t.id !== id));
     });
+  };
+
+  const editarTarefa = (tarefa) => {
+    setTarefaEmEdicao(tarefa);
+    setDescricao(tarefa.descricao);
+  };
+
+  const cancelarEdicao = () => {
+    setDescricao("");
+    setTarefaEmEdicao(null);
   };
 
   return (
@@ -37,9 +74,15 @@ export default function TarefasPage() {
           descricao={descricao}
           setDescricao={setDescricao}
           cadastrarTarefa={cadastrarTarefa}
+          tarefaEmEdicao={tarefaEmEdicao}
+          cancelarEdicao={cancelarEdicao}
         />
 
-        <TarefaTabela tarefas={tarefas} />
+        <TarefaTabela
+          tarefas={tarefas}
+          onEditar={editarTarefa}
+          onDeletar={deletarTarefa}
+        />
       </div>
     </section>
   );
